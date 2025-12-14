@@ -1,0 +1,94 @@
+<div class="dashboard-page">
+
+  <header class="top-bar">
+    <h1 class="welcome-text">Algebra - Lista Alumnos</h1>
+  </header>
+
+  <main class="dashboard-main">
+    <section class="card-menu">
+
+      <table class="students-table">
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Edad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let alumno of alumnos; let i = index">
+
+            <!-- NOMBRES -->
+            <td>
+              <span *ngIf="!alumno.editando">{{ alumno.nombres }}</span>
+              <input *ngIf="alumno.editando" [(ngModel)]="alumno.nombres">
+            </td>
+
+            <!-- APELLIDOS -->
+            <td>
+              <span *ngIf="!alumno.editando">{{ alumno.apellidos }}</span>
+              <input *ngIf="alumno.editando" [(ngModel)]="alumno.apellidos">
+            </td>
+
+            <!-- EDAD -->
+            <td>
+              <span *ngIf="!alumno.editando">{{ alumno.edad }}</span>
+              <input
+                *ngIf="alumno.editando"
+                type="number"
+                [(ngModel)]="alumno.edad"
+              >
+            </td>
+
+            <!-- ACCIONES -->
+            <td class="actions-cell">
+              <button
+                class="btn-action btn-edit"
+                *ngIf="!alumno.editando"
+                (click)="editar(alumno)"
+              >
+                ✏️ Editar
+              </button>
+
+              <button
+                class="btn-action btn-save"
+                *ngIf="alumno.editando"
+                (click)="guardar(alumno)"
+              >
+                💾 Guardar
+              </button>
+
+              <button
+                class="btn-action btn-delete"
+                (click)="eliminar(i)"
+              >
+                🗑 Eliminar
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- AGREGAR ALUMNO -->
+      <div class="add-student-form">
+        <input placeholder="Nombres" [(ngModel)]="nuevoAlumno.nombres">
+        <input placeholder="Apellidos" [(ngModel)]="nuevoAlumno.apellidos">
+        <input type="number" placeholder="Edad" [(ngModel)]="nuevoAlumno.edad">
+
+        <button class="btn-add-student" (click)="agregarAlumno()">
+          <span class="plus">+</span>
+          <span>Agregar Alumno</span>
+        </button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    © Derechos Reservados - 2025
+  </footer>
+
+</div>

@@ -1,0 +1,76 @@
+<div class="dashboard-page">
+
+  <header class="top-bar">
+    <h1 class="welcome-text">Bienvenido A1234</h1>
+  </header>
+
+  <main class="dashboard-main">
+    <section class="card-menu">
+
+      <h2 class="card-title">Notas</h2>
+
+      <div class="table-wrapper">
+        <table class="grades-table">
+          <thead>
+            <tr>
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Nota</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let alumno of alumnos">
+              <td>{{ alumno.nombres }}</td>
+              <td>{{ alumno.apellidos }}</td>
+
+              <!-- NOTA -->
+              <td>
+                <span *ngIf="!alumno.editando">{{ alumno.nota }}</span>
+
+                <input
+                  *ngIf="alumno.editando"
+                  type="number"
+                  [(ngModel)]="alumno.nota"
+                  min="0"
+                  max="20"
+                />
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="actions-cell">
+                <button
+                  *ngIf="!alumno.editando"
+                  class="btn-action btn-edit"
+                  (click)="editar(alumno)">
+                  ✏️ Editar
+                </button>
+
+                <button
+                  *ngIf="alumno.editando"
+                  class="btn-action btn-edit"
+                  (click)="guardar(alumno)">
+                  💾 Guardar
+                </button>
+
+                <button
+                  class="btn-action btn-delete"
+                  (click)="eliminar(alumno)">
+                  🗑 Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    © Derechos Reservados - 2025
+  </footer>
+
+</div>

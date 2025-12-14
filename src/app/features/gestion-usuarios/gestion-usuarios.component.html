@@ -1,0 +1,98 @@
+<div class="dashboard-page">
+
+  <header class="top-bar">
+    <h1 class="welcome-text">Gestión de Usuarios</h1>
+  </header>
+
+  <main class="dashboard-main">
+    <section class="card-menu">
+
+      <!-- AGREGAR USUARIO -->
+      <div class="add-user-container">
+        <input placeholder="Usuario" [(ngModel)]="nuevoUsuario.usuario">
+        <input placeholder="Contraseña" [(ngModel)]="nuevoUsuario.password">
+
+        <select [(ngModel)]="nuevoUsuario.role">
+          <option value="admin">Administrador</option>
+          <option value="profesor">Profesor</option>
+          <option value="alumno">Alumno</option>
+        </select>
+
+        <button class="btn-add-user" (click)="agregarUsuario()">
+          ➕ Agregar Usuario
+        </button>
+      </div>
+
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Contraseña</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let user of usuarios; let i = index">
+
+            <!-- USUARIO -->
+            <td>
+              <span *ngIf="!user.editando">{{ user.usuario }}</span>
+              <input *ngIf="user.editando" [(ngModel)]="user.usuario">
+            </td>
+
+            <!-- PASSWORD -->
+            <td>
+              <span *ngIf="!user.editando">{{ user.password }}</span>
+              <input *ngIf="user.editando" [(ngModel)]="user.password">
+            </td>
+
+            <!-- ROL -->
+            <td>
+              <span *ngIf="!user.editando">{{ user.role }}</span>
+              <select *ngIf="user.editando" [(ngModel)]="user.role">
+                <option value="admin">Administrador</option>
+                <option value="profesor">Profesor</option>
+                <option value="alumno">Alumno</option>
+              </select>
+            </td>
+
+            <!-- ACCIONES -->
+            <td class="actions-cell">
+              <button
+                *ngIf="!user.editando"
+                class="btn-action btn-edit"
+                (click)="editar(user)"
+              >
+                ✏️ Editar
+              </button>
+
+              <button
+                *ngIf="user.editando"
+                class="btn-action btn-save"
+                (click)="guardar(user)"
+              >
+                💾 Guardar
+              </button>
+
+              <button
+                class="btn-action btn-delete"
+                (click)="eliminar(i)"
+              >
+                🗑 Eliminar
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    © Derechos Reservados - 2025
+  </footer>
+
+</div>

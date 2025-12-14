@@ -1,0 +1,158 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, sans-serif;
+    background: radial-gradient(circle at top left, #f5f8ff, #e0ecff);
+    min-height: 100vh;
+}
+
+/* Contenedor general */
+.grades-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barra superior */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 60px 18px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1b2130;
+}
+
+/* Botón Regresar */
+.btn-back {
+    padding: 10px 28px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f71f0, #175fce);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* Contenido principal */
+.grades-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Tarjeta blanca */
+.card-grades {
+    width: 90%;
+    max-width: 1000px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+    padding: 24px 30px 30px;
+    margin-top: 14px;
+}
+
+/* Título "Notas" */
+.card-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1b2130;
+    margin-bottom: 16px;
+}
+
+/* Tabla */
+.table-wrapper {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #e0e6f0;
+    margin-bottom: 18px;
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.grades-table thead {
+    background: #f7fafc;
+}
+
+.grades-table th,
+.grades-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e6f0;
+}
+
+.grades-table th {
+    font-weight: 600;
+    color: #333;
+}
+
+.grades-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Celda de acciones */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+}
+
+/* Botones de acción */
+.btn-action {
+    border: none;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #ffffff;
+}
+
+/* Editar (azul) */
+.btn-edit {
+    background: linear-gradient(135deg, #1f71f0, #175fce);
+}
+
+/* Eliminar (rojo) */
+.btn-delete {
+    background: #e53935;
+}
+
+/* Botón Agregar Nota */
+.btn-add {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1f71f0, #175fce);
+    box-shadow: 0 14px 22px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px 0 24px;
+    font-size: 12px;
+    color: #7f8794;
+}
