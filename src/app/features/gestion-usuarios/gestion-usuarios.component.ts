@@ -1,16 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service';
-
-type Rol = 'admin' | 'profesor' | 'alumno';
-
-interface Usuario {
-  usuario: string;
-  password: string;
-  role: Rol;
-  editando?: boolean;
-}
+import { UsuariosService } from '../../core/services/usuarios.service';
+import { Usuario, Rol } from '../../core/domain/models';
 
 @Component({
   selector: 'app-gestion-usuarios',
@@ -19,45 +11,47 @@ interface Usuario {
   templateUrl: './gestion-usuarios.component.html',
   styleUrls: ['./gestion-usuarios.component.css']
 })
-export class GestionUsuariosComponent {
+export class GestionUsuariosComponent implements OnInit {
+  usuarios: (Usuario & { editando?: boolean })[] = [];
 
-  usuarios: Usuario[] = [];
-
-  nuevoUsuario: Usuario = {
+  nuevoUsuario = {
     usuario: '',
     password: '',
-    role: 'alumno'
+    rol: 'alumno' as Rol
   };
 
-  constructor(private authService: AuthService) {
-    // Referencia directa a los usuarios del login
-    this.usuarios = this.authService.usuarios;
+  constructor(private usuariosService: UsuariosService) {}
+
+  ngOnInit(): void {
+    this.cargar();
   }
 
-  editar(usuario: Usuario) {
+  private cargar(): void {
+    this.usuariosService.listar().subscribe(usuarios => (this.usuarios = usuarios));
+  }
+
+  editar(usuario: Usuario & { editando?: boolean }): void {
     usuario.editando = true;
   }
 
-  guardar(usuario: Usuario) {
-    usuario.editando = false;
+  guardar(usuario: Usuario & { editando?: boolean }): void {
+    this.usuariosService.actualizar(usuario.id, usuario).subscribe(() => {
+      usuario.editando = false;
+    });
   }
 
-  eliminar(index: number) {
-    this.usuarios.splice(index, 1);
+  eliminar(usuario: Usuario): void {
+    this.usuariosService.eliminar(usuario.id).subscribe(() => this.cargar());
   }
 
-  agregarUsuario() {
-    if (
-      this.nuevoUsuario.usuario &&
-      this.nuevoUsuario.password &&
-      this.nuevoUsuario.role
-    ) {
-      this.usuarios.push({ ...this.nuevoUsuario });
-      this.nuevoUsuario = {
-        usuario: '',
-        password: '',
-        role: 'alumno'
-      };
+  agregarUsuario(): void {
+    const { usuario, password, rol } = this.nuevoUsuario;
+    if (!usuario.trim() || !password.trim()) {
+      return;
     }
+    this.usuariosService.crear(usuario.trim(), password, rol).subscribe(() => {
+      this.nuevoUsuario = { usuario: '', password: '', rol: 'alumno' };
+      this.cargar();
+    });
   }
 }

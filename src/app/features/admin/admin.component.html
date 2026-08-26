@@ -1,28 +1,6 @@
-<div class="dashboard-page">
-    <!-- Barra superior -->
-    <header class="top-bar">
-        <h1 class="welcome-text">Bienvenido Admin 1</h1>
-        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
-    </header>
-
-    <!-- Tarjeta central -->
-    <main class="dashboard-main">
-        <section class="card-menu">
-            <button
-        class="menu-btn"
-        routerLink="/admin/gestion-cursos">
-        Gestionar Cursos
-      </button>
-            <button
-        class="menu-btn"
-        routerLink="/admin/gestion-usuarios">
-        Gestionar Usuarios
-      </button>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        © Derechos Reservados - 2025
-    </footer>
-</div>
+<app-shell
+  rol="admin"
+  [nombreUsuario]="nombreUsuario"
+  [navItems]="navItems"
+  (cerrarSesion)="logout()"
+></app-shell>

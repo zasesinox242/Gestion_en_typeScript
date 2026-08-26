@@ -1,24 +1,6 @@
-<div class="student-page">
-
-    <!-- Barra superior -->
-    <header class="top-bar">
-        <h1 class="title">Bienvenido A1234</h1>
-        <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
-    </header>
-
-    <!-- Contenido principal -->
-    <main class="student-main">
-        <section class="card-courses">
-            <h2 class="subtitle">Sus cursos:</h2>
-
-            <div class="courses-list">
-                <button class="course-btn">Álgebra</button>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        © Derechos Reservados - 2025
-    </footer>
-</div>
+<app-shell
+  rol="alumno"
+  [nombreUsuario]="nombreUsuario"
+  [navItems]="navItems"
+  (cerrarSesion)="logout()"
+></app-shell>

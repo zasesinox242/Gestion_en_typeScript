@@ -1,25 +1,27 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { AppShellComponent, NavItem } from '../../shared/ui/shell/app-shell.component';
 
 @Component({
   selector: 'app-cursos-alumno',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './cursos-alumno.component.html',
-  styleUrls: ['./cursos-alumno.component.css']
+  imports: [AppShellComponent],
+  templateUrl: './cursos-alumno.component.html'
 })
 export class CursosAlumnoComponent {
+  navItems: NavItem[] = [
+    { label: 'Mis cursos', path: '/alumno' }
+  ];
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
+
+  get nombreUsuario(): string {
+    return this.authService.getUsuarioActual() ?? 'Alumno';
+  }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

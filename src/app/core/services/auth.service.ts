@@ -1,66 +1,62 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { UsuariosRepository } from '../data/usuarios.repository';
+import { Rol } from '../domain/models';
 
-type Rol = 'admin' | 'profesor' | 'alumno';
-
-export interface LoginResponse {
+export interface SesionActiva {
   token: string;
-  role: Rol;
-}
-
-interface UsuarioAuth {
+  rol: Rol;
   usuario: string;
-  password: string;
-  role: Rol;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+const TOKEN_KEY = 'token';
+const ROL_KEY = 'role';
+const USUARIO_KEY = 'usuario';
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  constructor(private usuariosRepo: UsuariosRepository) {}
 
-  usuarios: UsuarioAuth[] = [
-    { usuario: 'admin', password: 'admin123', role: 'admin' },
-    { usuario: 'profe', password: 'profe123', role: 'profesor' },
-    { usuario: 'alumno', password: 'alumno123', role: 'alumno' }
-  ];
+  login(usuario: string, password: string): Observable<SesionActiva> {
+    return this.usuariosRepo.findByCredentials(usuario, password).pipe(
+      switchMap(encontrado => {
+        if (!encontrado) {
+          return throwError(() => ({ message: 'Usuario o contraseña incorrectos' }));
+        }
+        // Nota: token simulado únicamente para fines de demostración.
+        // En un backend real esto sería un JWT firmado por el servidor.
+        const payload = { usuario: encontrado.usuario, rol: encontrado.rol, iat: Date.now() };
+        const token = btoa(JSON.stringify(payload));
 
-  private tokenKey = 'token';
-  private roleKey = 'role';
+        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(ROL_KEY, encontrado.rol);
+        localStorage.setItem(USUARIO_KEY, encontrado.usuario);
 
-  login(usuario: string, password: string): Observable<LoginResponse> {
-    const user = this.usuarios.find(
-      u => u.usuario === usuario && u.password === password
+        return [{ token, rol: encontrado.rol, usuario: encontrado.usuario }];
+      })
     );
-
-    if (!user) {
-      return throwError(() => ({ message: 'Credenciales inválidas' }));
-    }
-
-    const fakePayload = { usuario: user.usuario, role: user.role, iat: Date.now() };
-    const fakeToken = btoa(JSON.stringify(fakePayload));
-
-    localStorage.setItem(this.tokenKey, fakeToken);
-    localStorage.setItem(this.roleKey, user.role);
-
-    return of({ token: fakeToken, role: user.role }).pipe(delay(300));
   }
 
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.roleKey);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(ROL_KEY);
+    localStorage.removeItem(USUARIO_KEY);
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem(this.tokenKey);
+    return !!localStorage.getItem(TOKEN_KEY);
   }
 
-  getRole(): Rol | null {
-    return localStorage.getItem(this.roleKey) as Rol | null;
+  getRol(): Rol | null {
+    return localStorage.getItem(ROL_KEY) as Rol | null;
+  }
+
+  getUsuarioActual(): string | null {
+    return localStorage.getItem(USUARIO_KEY);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return localStorage.getItem(TOKEN_KEY);
   }
 }

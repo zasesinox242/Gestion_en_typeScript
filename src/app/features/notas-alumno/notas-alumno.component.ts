@@ -1,38 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface NotaAlumno {
-  nombres: string;
-  apellidos: string;
-  nota: number;
-  editando?: boolean;
-}
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { NotasService, AlumnoConNota } from '../../core/services/notas.service';
+import { CursosService } from '../../core/services/cursos.service';
 
 @Component({
   selector: 'app-notas-alumno',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './notas-alumno.component.html',
   styleUrls: ['./notas-alumno.component.css']
 })
-export class NotasAlumnoComponent {
+export class NotasAlumnoComponent implements OnInit {
+  cursoId!: number;
+  nombreCurso = '';
+  alumnos: (AlumnoConNota & { editando?: boolean })[] = [];
 
-  alumnos: NotaAlumno[] = [
-    { nombres: 'Valeria', apellidos: 'Montoya Ríos', nota: 18 },
-    { nombres: 'Andrés Marcos', apellidos: 'Paredes Salazar', nota: 19 },
-    { nombres: 'Luciana', apellidos: 'Herrera Campos', nota: 16 }
-  ];
+  constructor(
+    private route: ActivatedRoute,
+    private notasService: NotasService,
+    private cursosService: CursosService
+  ) {}
 
-  editar(alumno: NotaAlumno) {
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.cursoId = Number(params.get('cursoId'));
+      this.cursosService.obtener(this.cursoId).subscribe(curso => {
+        this.nombreCurso = curso?.nombre ?? 'Curso';
+      });
+      this.cargar();
+    });
+  }
+
+  private cargar(): void {
+    this.notasService.listarPorCurso(this.cursoId).subscribe(alumnos => (this.alumnos = alumnos));
+  }
+
+  editar(alumno: AlumnoConNota & { editando?: boolean }): void {
     alumno.editando = true;
   }
 
-  guardar(alumno: NotaAlumno) {
-    alumno.editando = false;
-  }
-
-  eliminar(alumno: NotaAlumno) {
-    alumno.nota = 0;
+  guardar(alumno: AlumnoConNota & { editando?: boolean }): void {
+    const valor = Math.min(20, Math.max(0, alumno.nota ?? 0));
+    this.notasService.guardarNota(this.cursoId, alumno.alumnoId, valor).subscribe(() => {
+      alumno.nota = valor;
+      alumno.editando = false;
+    });
   }
 }

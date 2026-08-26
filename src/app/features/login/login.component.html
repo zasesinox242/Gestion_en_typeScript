@@ -1,7 +1,9 @@
-<div class="page-wrapper">
-  <div class="card-login">
-    <div class="avatar-wrapper">
-      <div class="avatar-icon"></div>
+<div class="login-page">
+  <div class="login-card card">
+    <div class="login-brand">
+      <span class="brand-mark">GA</span>
+      <h1>Gestión Académica</h1>
+      <p class="text-muted">Ingresa con tu cuenta para continuar.</p>
     </div>
 
     <form class="login-form" (ngSubmit)="onLogin()">
@@ -12,6 +14,7 @@
           id="usuario"
           name="usuario"
           [(ngModel)]="usuario"
+          autocomplete="username"
           required
         />
       </div>
@@ -23,21 +26,18 @@
           id="password"
           name="password"
           [(ngModel)]="password"
+          autocomplete="current-password"
           required
         />
       </div>
 
-      <p class="error" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </p>
+      <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-      <button type="submit" class="btn-login">
-        Iniciar Sesión
+      <button type="submit" class="btn btn-primary btn-login" [disabled]="cargando">
+        {{ cargando ? 'Ingresando…' : 'Iniciar sesión' }}
       </button>
     </form>
   </div>
 
-  <footer class="footer">
-    © Derechos Reservados - 2025
-  </footer>
+  <footer class="login-footer text-muted">© Instituto — 2026</footer>
 </div>

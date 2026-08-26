@@ -1,0 +1,37 @@
+<div class="shell" [class]="'shell--' + rol">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">GA</span>
+      <span class="brand-name">Gestión Académica</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="nav-link"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <span class="user-avatar">{{ inicial }}</span>
+        <div class="user-info">
+          <span class="user-name">{{ nombreUsuario }}</span>
+          <span [class]="badgeClass">{{ rolLabel }}</span>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm logout-btn" (click)="onLogout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="shell-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

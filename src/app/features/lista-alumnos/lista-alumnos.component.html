@@ -1,94 +1,51 @@
-<div class="dashboard-page">
+<div class="page-header">
+  <a routerLink="/admin/gestion-cursos" class="back-link">← Cursos</a>
+  <h1>{{ nombreCurso }} · Alumnos</h1>
+  <p class="text-muted">Alumnos matriculados en este curso.</p>
+</div>
 
-  <header class="top-bar">
-    <h1 class="welcome-text">Algebra - Lista Alumnos</h1>
-  </header>
+<div class="card">
+  <div class="card-body">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Edad</th>
+          <th style="width: 200px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let alumno of alumnos">
+          <td>
+            <span *ngIf="!alumno.editando">{{ alumno.nombres }}</span>
+            <input *ngIf="alumno.editando" [(ngModel)]="alumno.nombres" name="n-{{alumno.id}}" />
+          </td>
+          <td>
+            <span *ngIf="!alumno.editando">{{ alumno.apellidos }}</span>
+            <input *ngIf="alumno.editando" [(ngModel)]="alumno.apellidos" name="a-{{alumno.id}}" />
+          </td>
+          <td class="mono">
+            <span *ngIf="!alumno.editando">{{ alumno.edad }}</span>
+            <input *ngIf="alumno.editando" type="number" [(ngModel)]="alumno.edad" name="e-{{alumno.id}}" />
+          </td>
+          <td class="actions-cell">
+            <button *ngIf="!alumno.editando" class="btn btn-outline btn-sm" (click)="editar(alumno)">Editar</button>
+            <button *ngIf="alumno.editando" class="btn btn-primary btn-sm" (click)="guardar(alumno)">Guardar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminar(alumno)">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="alumnos.length === 0">
+          <td colspan="4" class="text-muted">Ningún alumno matriculado todavía.</td>
+        </tr>
+      </tbody>
+    </table>
 
-  <main class="dashboard-main">
-    <section class="card-menu">
-
-      <table class="students-table">
-        <thead>
-          <tr>
-            <th>Nombres</th>
-            <th>Apellidos</th>
-            <th>Edad</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let alumno of alumnos; let i = index">
-
-            <!-- NOMBRES -->
-            <td>
-              <span *ngIf="!alumno.editando">{{ alumno.nombres }}</span>
-              <input *ngIf="alumno.editando" [(ngModel)]="alumno.nombres">
-            </td>
-
-            <!-- APELLIDOS -->
-            <td>
-              <span *ngIf="!alumno.editando">{{ alumno.apellidos }}</span>
-              <input *ngIf="alumno.editando" [(ngModel)]="alumno.apellidos">
-            </td>
-
-            <!-- EDAD -->
-            <td>
-              <span *ngIf="!alumno.editando">{{ alumno.edad }}</span>
-              <input
-                *ngIf="alumno.editando"
-                type="number"
-                [(ngModel)]="alumno.edad"
-              >
-            </td>
-
-            <!-- ACCIONES -->
-            <td class="actions-cell">
-              <button
-                class="btn-action btn-edit"
-                *ngIf="!alumno.editando"
-                (click)="editar(alumno)"
-              >
-                ✏️ Editar
-              </button>
-
-              <button
-                class="btn-action btn-save"
-                *ngIf="alumno.editando"
-                (click)="guardar(alumno)"
-              >
-                💾 Guardar
-              </button>
-
-              <button
-                class="btn-action btn-delete"
-                (click)="eliminar(i)"
-              >
-                🗑 Eliminar
-              </button>
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- AGREGAR ALUMNO -->
-      <div class="add-student-form">
-        <input placeholder="Nombres" [(ngModel)]="nuevoAlumno.nombres">
-        <input placeholder="Apellidos" [(ngModel)]="nuevoAlumno.apellidos">
-        <input type="number" placeholder="Edad" [(ngModel)]="nuevoAlumno.edad">
-
-        <button class="btn-add-student" (click)="agregarAlumno()">
-          <span class="plus">+</span>
-          <span>Agregar Alumno</span>
-        </button>
-      </div>
-
-    </section>
-  </main>
-
-  <footer class="footer">
-    © Derechos Reservados - 2025
-  </footer>
-
+    <form class="inline-form" (ngSubmit)="agregarAlumno()">
+      <input placeholder="Nombres" [(ngModel)]="nuevoAlumno.nombres" name="nombres" />
+      <input placeholder="Apellidos" [(ngModel)]="nuevoAlumno.apellidos" name="apellidos" />
+      <input type="number" placeholder="Edad" [(ngModel)]="nuevoAlumno.edad" name="edad" />
+      <button type="submit" class="btn btn-accent">+ Agregar alumno</button>
+    </form>
+  </div>
 </div>

@@ -1,0 +1,28 @@
+.page-header {
+  margin-bottom: 1.75rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-width: 700px;
+}
+
+.stat-card {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-primary-dark);
+}
+
+.stat-label {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}

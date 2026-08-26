@@ -1,76 +1,44 @@
-<div class="dashboard-page">
+<div class="page-header">
+  <a routerLink="/profesor" class="back-link">← Mis cursos</a>
+  <h1>{{ nombreCurso }} · Notas</h1>
+  <p class="text-muted">Notas registradas para este curso (escala 0–20).</p>
+</div>
 
-  <header class="top-bar">
-    <h1 class="welcome-text">Bienvenido A1234</h1>
-  </header>
-
-  <main class="dashboard-main">
-    <section class="card-menu">
-
-      <h2 class="card-title">Notas</h2>
-
-      <div class="table-wrapper">
-        <table class="grades-table">
-          <thead>
-            <tr>
-              <th>Nombres</th>
-              <th>Apellidos</th>
-              <th>Nota</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr *ngFor="let alumno of alumnos">
-              <td>{{ alumno.nombres }}</td>
-              <td>{{ alumno.apellidos }}</td>
-
-              <!-- NOTA -->
-              <td>
-                <span *ngIf="!alumno.editando">{{ alumno.nota }}</span>
-
-                <input
-                  *ngIf="alumno.editando"
-                  type="number"
-                  [(ngModel)]="alumno.nota"
-                  min="0"
-                  max="20"
-                />
-              </td>
-
-              <!-- ACCIONES -->
-              <td class="actions-cell">
-                <button
-                  *ngIf="!alumno.editando"
-                  class="btn-action btn-edit"
-                  (click)="editar(alumno)">
-                  ✏️ Editar
-                </button>
-
-                <button
-                  *ngIf="alumno.editando"
-                  class="btn-action btn-edit"
-                  (click)="guardar(alumno)">
-                  💾 Guardar
-                </button>
-
-                <button
-                  class="btn-action btn-delete"
-                  (click)="eliminar(alumno)">
-                  🗑 Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-
-        </table>
-      </div>
-
-    </section>
-  </main>
-
-  <footer class="footer">
-    © Derechos Reservados - 2025
-  </footer>
-
+<div class="card">
+  <div class="card-body">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Nota</th>
+          <th style="width: 160px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let alumno of alumnos">
+          <td>{{ alumno.nombres }}</td>
+          <td>{{ alumno.apellidos }}</td>
+          <td class="mono">
+            <span *ngIf="!alumno.editando">{{ alumno.nota ?? '—' }}</span>
+            <input
+              *ngIf="alumno.editando"
+              type="number"
+              min="0"
+              max="20"
+              [(ngModel)]="alumno.nota"
+              name="nota-{{alumno.alumnoId}}"
+            />
+          </td>
+          <td class="actions-cell">
+            <button *ngIf="!alumno.editando" class="btn btn-outline btn-sm" (click)="editar(alumno)">Editar</button>
+            <button *ngIf="alumno.editando" class="btn btn-primary btn-sm" (click)="guardar(alumno)">Guardar</button>
+          </td>
+        </tr>
+        <tr *ngIf="alumnos.length === 0">
+          <td colspan="4" class="text-muted">No hay alumnos matriculados en este curso.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -1,56 +1,69 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Alumno {
-  nombres: string;
-  apellidos: string;
-  edad: number;
-  editando?: boolean;
-}
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { AlumnosService } from '../../core/services/alumnos.service';
+import { CursosService } from '../../core/services/cursos.service';
+import { Alumno } from '../../core/domain/models';
 
 @Component({
   selector: 'app-lista-alumnos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './lista-alumnos.component.html',
   styleUrls: ['./lista-alumnos.component.css']
 })
-export class ListaAlumnosComponent {
+export class ListaAlumnosComponent implements OnInit {
+  cursoId!: number;
+  nombreCurso = '';
+  alumnos: (Alumno & { editando?: boolean })[] = [];
 
-  alumnos: Alumno[] = [
-    { nombres: 'Valeria', apellidos: 'Montoya Ríos', edad: 13 },
-    { nombres: 'Andrés Marcos', apellidos: 'Paredes Salazar', edad: 14 },
-    { nombres: 'Luciana', apellidos: 'Herrera Campos', edad: 12 },
-    { nombres: 'Diego Franco', apellidos: 'Quispe López', edad: 13 }
-  ];
+  nuevoAlumno = { nombres: '', apellidos: '', edad: null as number | null };
 
-  nuevoAlumno: Alumno = {
-    nombres: '',
-    apellidos: '',
-    edad: 0
-  };
+  constructor(
+    private route: ActivatedRoute,
+    private alumnosService: AlumnosService,
+    private cursosService: CursosService
+  ) {}
 
-  editar(alumno: Alumno) {
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.cursoId = Number(params.get('cursoId'));
+      this.cursosService.obtener(this.cursoId).subscribe(curso => {
+        this.nombreCurso = curso?.nombre ?? 'Curso';
+      });
+      this.cargar();
+    });
+  }
+
+  private cargar(): void {
+    this.alumnosService.listarPorCurso(this.cursoId).subscribe(alumnos => (this.alumnos = alumnos));
+  }
+
+  editar(alumno: Alumno & { editando?: boolean }): void {
     alumno.editando = true;
   }
 
-  guardar(alumno: Alumno) {
-    alumno.editando = false;
+  guardar(alumno: Alumno & { editando?: boolean }): void {
+    this.alumnosService.actualizar(alumno.id, alumno).subscribe(() => {
+      alumno.editando = false;
+    });
   }
 
-  eliminar(index: number) {
-    this.alumnos.splice(index, 1);
+  eliminar(alumno: Alumno): void {
+    this.alumnosService.eliminar(alumno.id).subscribe(() => this.cargar());
   }
 
-  agregarAlumno() {
-    if (
-      this.nuevoAlumno.nombres &&
-      this.nuevoAlumno.apellidos &&
-      this.nuevoAlumno.edad > 0
-    ) {
-      this.alumnos.push({ ...this.nuevoAlumno });
-      this.nuevoAlumno = { nombres: '', apellidos: '', edad: 0 };
+  agregarAlumno(): void {
+    const { nombres, apellidos, edad } = this.nuevoAlumno;
+    if (!nombres.trim() || !apellidos.trim() || !edad || edad <= 0) {
+      return;
     }
+    this.alumnosService
+      .crear({ nombres: nombres.trim(), apellidos: apellidos.trim(), edad, cursosIds: [this.cursoId] })
+      .subscribe(() => {
+        this.nuevoAlumno = { nombres: '', apellidos: '', edad: null };
+        this.cargar();
+      });
   }
 }

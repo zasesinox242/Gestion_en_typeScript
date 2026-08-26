@@ -1,0 +1,23 @@
+<div class="page-header">
+  <h1>Resumen</h1>
+  <p class="text-muted">Vista general del sistema.</p>
+</div>
+
+<section class="stats-grid" *ngIf="!cargando; else loading">
+  <div class="card stat-card">
+    <span class="stat-value mono">{{ totalCursos }}</span>
+    <span class="stat-label">Cursos activos</span>
+  </div>
+  <div class="card stat-card">
+    <span class="stat-value mono">{{ totalAlumnos }}</span>
+    <span class="stat-label">Alumnos matriculados</span>
+  </div>
+  <div class="card stat-card">
+    <span class="stat-value mono">{{ totalUsuarios }}</span>
+    <span class="stat-label">Cuentas de usuario</span>
+  </div>
+</section>
+
+<ng-template #loading>
+  <p class="text-muted">Cargando datos…</p>
+</ng-template>

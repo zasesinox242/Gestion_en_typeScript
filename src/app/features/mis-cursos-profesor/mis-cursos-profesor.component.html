@@ -1,0 +1,12 @@
+<div class="page-header">
+  <h1>Mis cursos</h1>
+  <p class="text-muted">Selecciona un curso para registrar notas.</p>
+</div>
+
+<div class="cursos-grid">
+  <a *ngFor="let curso of cursos" class="card curso-card" [routerLink]="['/profesor/notas', curso.id]">
+    <h2>{{ curso.nombre }}</h2>
+    <span class="text-muted">Ver notas →</span>
+  </a>
+  <p *ngIf="cursos.length === 0" class="text-muted">No tienes cursos asignados.</p>
+</div>

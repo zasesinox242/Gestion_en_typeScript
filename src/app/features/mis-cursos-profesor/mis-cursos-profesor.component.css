@@ -1,0 +1,21 @@
+.page-header { margin-bottom: 1.5rem; }
+
+.cursos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 700px;
+}
+
+.curso-card {
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.curso-card:hover {
+  box-shadow: 0 2px 4px rgba(30, 42, 34, 0.1), 0 8px 20px rgba(30, 42, 34, 0.08);
+}

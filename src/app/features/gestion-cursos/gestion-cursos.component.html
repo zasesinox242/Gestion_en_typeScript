@@ -1,38 +1,46 @@
-<div class="dashboard-page">
+<div class="page-header">
+  <h1>Gestión de cursos</h1>
+  <p class="text-muted">Crea, edita y administra los cursos del instituto.</p>
+</div>
 
-    <!-- Barra superior -->
-    <header class="top-bar">
-        <h1 class="welcome-text">Gestión de Cursos</h1>
-    </header>
+<div class="card">
+  <div class="card-body">
+    <form class="inline-form" (ngSubmit)="agregar()">
+      <input
+        type="text"
+        placeholder="Nombre del curso (ej. Historia)"
+        [(ngModel)]="nombreNuevoCurso"
+        name="nombreNuevoCurso"
+      />
+      <button type="submit" class="btn btn-accent">+ Agregar curso</button>
+    </form>
 
-    <!-- Contenido principal -->
-    <main class="dashboard-main">
-        <section class="card-menu">
-
-            <table class="courses-table">
-                <thead>
-                    <tr>
-                        <th>Nombre Curso</th>
-                        <th>Ver</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Algebra</td>
-                        <td>
-                            <button class="icon-btn icon-grey" routerLink="/admin/gestion-cursos/lista-alumnos">👁</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        © Derechos Reservados - 2025
-    </footer>
-
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Curso</th>
+          <th style="width: 220px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let curso of cursos">
+          <td>
+            <span *ngIf="!curso.editando">{{ curso.nombre }}</span>
+            <input *ngIf="curso.editando" type="text" [(ngModel)]="curso.nombre" name="nombre-{{curso.id}}" />
+          </td>
+          <td class="actions-cell">
+            <a class="btn btn-outline btn-sm" [routerLink]="['/admin/gestion-cursos', curso.id, 'alumnos']">
+              Ver alumnos
+            </a>
+            <button *ngIf="!curso.editando" class="btn btn-outline btn-sm" (click)="editar(curso)">Editar</button>
+            <button *ngIf="curso.editando" class="btn btn-primary btn-sm" (click)="guardar(curso)">Guardar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminar(curso)">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="cursos.length === 0">
+          <td colspan="2" class="text-muted">Aún no hay cursos registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

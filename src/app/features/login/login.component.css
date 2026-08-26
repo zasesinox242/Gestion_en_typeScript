@@ -1,131 +1,74 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: var(--color-primary-dark);
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(255,255,255,0.025) 28px);
+  padding: 1.5rem;
 }
 
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, sans-serif;
-    background: radial-gradient(circle at top left, #f5f8ff, #e7edf7);
-    min-height: 100vh;
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 2.25rem 2rem;
 }
 
-/* Contenedor principal */
-.page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.login-brand {
+  text-align: center;
+  margin-bottom: 1.75rem;
 }
 
-/* Tarjeta de login */
-.card-login {
-    width: 360px;
-    padding: 36px 40px 32px;
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-    text-align: left;
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
 }
 
-/* Avatar superior */
-.avatar-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 24px;
+.login-brand h1 {
+  font-size: 1.3rem;
+  margin-bottom: 0.25rem;
 }
 
-.avatar-icon {
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #ffffff, #d7dde6);
-    position: relative;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
 }
 
-/* simulamos el icono de usuario */
-.avatar-icon::before,
-.avatar-icon::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #7b8491;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-.avatar-icon::before {
-    top: 18px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+.form-group input {
+  width: 100%;
 }
 
-.avatar-icon::after {
-    bottom: 12px;
-    width: 46px;
-    height: 26px;
-    border-radius: 50px 50px 14px 14px;
-}
-
-/* Formulario */
-.login-form .form-group {
-    margin-bottom: 18px;
-}
-
-.login-form label {
-    display: block;
-    font-size: 14px;
-    color: #3b3f46;
-    margin-bottom: 6px;
-}
-
-.login-form input {
-    width: 100%;
-    padding: 9px 10px;
-    border-radius: 8px;
-    border: 1px solid #c7d2e4;
-    outline: none;
-    font-size: 14px;
-}
-
-.login-form input:focus {
-    border-color: #2f73d6;
-    box-shadow: 0 0 0 2px rgba(47, 115, 214, 0.15);
-}
-
-/* Link recuperar contraseña */
-.forgot-link {
-    display: block;
-    text-align: center;
-    margin: 6px 0 20px;
-    font-size: 13px;
-    text-decoration: none;
-    color: #2f73d6;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
-}
-
-/* Botón */
 .btn-login {
-    width: 100%;
-    border: none;
-    border-radius: 25px;
-    padding: 11px 0;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1f71f0, #175fce);
-    box-shadow: 0 12px 18px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.25rem;
+}
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-/* Footer */
-.footer {
-    margin-top: 40px;
-    font-size: 12px;
-    color: #7f8794;
+.login-footer {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
 }

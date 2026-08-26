@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -14,38 +15,29 @@ export class LoginComponent {
   usuario = '';
   password = '';
   errorMessage = '';
+  cargando = false;
+
+  private readonly rutaPorRol: Record<string, string> = {
+    admin: '/admin',
+    profesor: '/profesor',
+    alumno: '/alumno'
+  };
 
   constructor(private auth: AuthService, private router: Router) {}
 
-onLogin(): void {
-  this.errorMessage = '';
+  onLogin(): void {
+    this.errorMessage = '';
+    this.cargando = true;
 
-  this.auth.login(this.usuario, this.password).subscribe({
-    next: ({ role }) => {
-
-      if (role === 'admin') {
-        this.router.navigate(['/admin']);
-        return;
+    this.auth.login(this.usuario, this.password).subscribe({
+      next: ({ rol }) => {
+        this.cargando = false;
+        this.router.navigate([this.rutaPorRol[rol] ?? '/login']);
+      },
+      error: err => {
+        this.cargando = false;
+        this.errorMessage = err?.message || 'Error de autenticación';
       }
-
-      if (role === 'profesor') {
-        this.router.navigate(['/cursos-profesor']);
-        return;
-      }
-
-      if (role === 'alumno') {
-        this.router.navigate(['/cursos-alumno']);
-        return;
-      }
-
-      this.router.navigate(['/login']);
-    },
-    error: err => {
-      this.errorMessage = err?.message || 'Error de autenticación';
-    }
-  });
-}
-
-
-
+    });
+  }
 }
