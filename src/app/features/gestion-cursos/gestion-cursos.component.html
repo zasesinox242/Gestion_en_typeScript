@@ -15,32 +15,18 @@
       <button type="submit" class="btn btn-accent">+ Agregar curso</button>
     </form>
 
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Curso</th>
-          <th style="width: 220px">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let curso of cursos">
-          <td>
-            <span *ngIf="!curso.editando">{{ curso.nombre }}</span>
-            <input *ngIf="curso.editando" type="text" [(ngModel)]="curso.nombre" name="nombre-{{curso.id}}" />
-          </td>
-          <td class="actions-cell">
-            <a class="btn btn-outline btn-sm" [routerLink]="['/admin/gestion-cursos', curso.id, 'alumnos']">
-              Ver alumnos
-            </a>
-            <button *ngIf="!curso.editando" class="btn btn-outline btn-sm" (click)="editar(curso)">Editar</button>
-            <button *ngIf="curso.editando" class="btn btn-primary btn-sm" (click)="guardar(curso)">Guardar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminar(curso)">Eliminar</button>
-          </td>
-        </tr>
-        <tr *ngIf="cursos.length === 0">
-          <td colspan="2" class="text-muted">Aún no hay cursos registrados.</td>
-        </tr>
-      </tbody>
-    </table>
+    <app-editable-table
+      [items]="cursos"
+      [columnas]="columnas"
+      mensajeVacio="Aún no hay cursos registrados."
+      (guardar)="guardar($event)"
+      (eliminar)="eliminar($event)"
+    >
+      <ng-template #accionesExtra let-curso>
+        <a class="btn btn-outline btn-sm" [routerLink]="['/admin/gestion-cursos', curso.id, 'alumnos']">
+          Ver alumnos
+        </a>
+      </ng-template>
+    </app-editable-table>
   </div>
 </div>

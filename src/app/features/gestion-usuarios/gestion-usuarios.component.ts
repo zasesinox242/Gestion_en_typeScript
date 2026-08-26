@@ -3,22 +3,35 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsuariosService } from '../../core/services/usuarios.service';
 import { Usuario, Rol } from '../../core/domain/models';
+import { ColumnaTabla, EditableTableComponent } from '../../shared/ui/editable-table/editable-table.component';
+
+const OPCIONES_ROL = [
+  { value: 'admin', label: 'Administrador' },
+  { value: 'profesor', label: 'Profesor' },
+  { value: 'alumno', label: 'Alumno' }
+];
 
 @Component({
   selector: 'app-gestion-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EditableTableComponent],
   templateUrl: './gestion-usuarios.component.html',
   styleUrls: ['./gestion-usuarios.component.css']
 })
 export class GestionUsuariosComponent implements OnInit {
-  usuarios: (Usuario & { editando?: boolean })[] = [];
+  usuarios: Usuario[] = [];
 
   nuevoUsuario = {
     usuario: '',
     password: '',
     rol: 'alumno' as Rol
   };
+
+  columnas: ColumnaTabla<Usuario>[] = [
+    { key: 'usuario', label: 'Usuario' },
+    { key: 'password', label: 'Contraseña', enmascarar: true },
+    { key: 'rol', label: 'Rol', tipo: 'select', opciones: OPCIONES_ROL }
+  ];
 
   constructor(private usuariosService: UsuariosService) {}
 
@@ -30,14 +43,8 @@ export class GestionUsuariosComponent implements OnInit {
     this.usuariosService.listar().subscribe(usuarios => (this.usuarios = usuarios));
   }
 
-  editar(usuario: Usuario & { editando?: boolean }): void {
-    usuario.editando = true;
-  }
-
-  guardar(usuario: Usuario & { editando?: boolean }): void {
-    this.usuariosService.actualizar(usuario.id, usuario).subscribe(() => {
-      usuario.editando = false;
-    });
+  guardar(usuario: Usuario): void {
+    this.usuariosService.actualizar(usuario.id, usuario).subscribe();
   }
 
   eliminar(usuario: Usuario): void {

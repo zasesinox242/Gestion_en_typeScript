@@ -16,40 +16,12 @@
       <button type="submit" class="btn btn-accent">+ Agregar usuario</button>
     </form>
 
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Contraseña</th>
-          <th>Rol</th>
-          <th style="width: 200px">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of usuarios">
-          <td>
-            <span *ngIf="!user.editando">{{ user.usuario }}</span>
-            <input *ngIf="user.editando" [(ngModel)]="user.usuario" name="u-{{user.id}}" />
-          </td>
-          <td>
-            <span *ngIf="!user.editando" class="mono">••••••••</span>
-            <input *ngIf="user.editando" [(ngModel)]="user.password" name="p-{{user.id}}" />
-          </td>
-          <td>
-            <span *ngIf="!user.editando" [class]="'badge-rol badge-rol--' + user.rol">{{ user.rol }}</span>
-            <select *ngIf="user.editando" [(ngModel)]="user.rol" name="r-{{user.id}}">
-              <option value="admin">Administrador</option>
-              <option value="profesor">Profesor</option>
-              <option value="alumno">Alumno</option>
-            </select>
-          </td>
-          <td class="actions-cell">
-            <button *ngIf="!user.editando" class="btn btn-outline btn-sm" (click)="editar(user)">Editar</button>
-            <button *ngIf="user.editando" class="btn btn-primary btn-sm" (click)="guardar(user)">Guardar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminar(user)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <app-editable-table
+      [items]="usuarios"
+      [columnas]="columnas"
+      mensajeVacio="Aún no hay usuarios registrados."
+      (guardar)="guardar($event)"
+      (eliminar)="eliminar($event)"
+    ></app-editable-table>
   </div>
 </div>

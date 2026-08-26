@@ -5,20 +5,27 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AlumnosService } from '../../core/services/alumnos.service';
 import { CursosService } from '../../core/services/cursos.service';
 import { Alumno } from '../../core/domain/models';
+import { ColumnaTabla, EditableTableComponent } from '../../shared/ui/editable-table/editable-table.component';
 
 @Component({
   selector: 'app-lista-alumnos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, EditableTableComponent],
   templateUrl: './lista-alumnos.component.html',
   styleUrls: ['./lista-alumnos.component.css']
 })
 export class ListaAlumnosComponent implements OnInit {
   cursoId!: number;
   nombreCurso = '';
-  alumnos: (Alumno & { editando?: boolean })[] = [];
+  alumnos: Alumno[] = [];
 
   nuevoAlumno = { nombres: '', apellidos: '', edad: null as number | null };
+
+  columnas: ColumnaTabla<Alumno>[] = [
+    { key: 'nombres', label: 'Nombres' },
+    { key: 'apellidos', label: 'Apellidos' },
+    { key: 'edad', label: 'Edad', tipo: 'number' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -40,14 +47,8 @@ export class ListaAlumnosComponent implements OnInit {
     this.alumnosService.listarPorCurso(this.cursoId).subscribe(alumnos => (this.alumnos = alumnos));
   }
 
-  editar(alumno: Alumno & { editando?: boolean }): void {
-    alumno.editando = true;
-  }
-
-  guardar(alumno: Alumno & { editando?: boolean }): void {
-    this.alumnosService.actualizar(alumno.id, alumno).subscribe(() => {
-      alumno.editando = false;
-    });
+  guardar(alumno: Alumno): void {
+    this.alumnosService.actualizar(alumno.id, alumno).subscribe();
   }
 
   eliminar(alumno: Alumno): void {

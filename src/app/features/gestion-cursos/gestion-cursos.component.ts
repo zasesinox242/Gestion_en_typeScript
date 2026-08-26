@@ -4,17 +4,20 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CursosService } from '../../core/services/cursos.service';
 import { Curso } from '../../core/domain/models';
+import { ColumnaTabla, EditableTableComponent } from '../../shared/ui/editable-table/editable-table.component';
 
 @Component({
   selector: 'app-gestion-cursos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, EditableTableComponent],
   templateUrl: './gestion-cursos.component.html',
   styleUrls: ['./gestion-cursos.component.css']
 })
 export class GestionCursosComponent implements OnInit {
-  cursos: (Curso & { editando?: boolean })[] = [];
+  cursos: Curso[] = [];
   nombreNuevoCurso = '';
+
+  columnas: ColumnaTabla<Curso>[] = [{ key: 'nombre', label: 'Curso' }];
 
   constructor(private cursosService: CursosService) {}
 
@@ -37,14 +40,8 @@ export class GestionCursosComponent implements OnInit {
     });
   }
 
-  editar(curso: Curso & { editando?: boolean }): void {
-    curso.editando = true;
-  }
-
-  guardar(curso: Curso & { editando?: boolean }): void {
-    this.cursosService.actualizar(curso.id, curso.nombre).subscribe(() => {
-      curso.editando = false;
-    });
+  guardar(curso: Curso): void {
+    this.cursosService.actualizar(curso.id, curso.nombre).subscribe();
   }
 
   eliminar(curso: Curso): void {

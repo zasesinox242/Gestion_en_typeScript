@@ -1,0 +1,66 @@
+<table class="data-table">
+  <thead>
+    <tr>
+      <th *ngFor="let columna of columnas" [style.width]="columna.ancho">{{ columna.label }}</th>
+      <th style="width: 200px">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items; trackBy: trackById">
+      <td *ngFor="let columna of columnas" [class.mono]="columna.tipo === 'number'">
+        <ng-container [ngSwitch]="columna.tipo">
+          <ng-container *ngSwitchCase="'select'">
+            <span *ngIf="!estaEditando(item)" [class]="'badge-rol badge-rol--' + valor(item, columna)">
+              {{ etiquetaOpcion(columna, item) }}
+            </span>
+            <select
+              *ngIf="estaEditando(item)"
+              [ngModel]="valor(item, columna)"
+              (ngModelChange)="actualizarValor(item, columna, $event)"
+              [name]="campoNombre(columna, item)"
+            >
+              <option *ngFor="let opcion of columna.opciones" [value]="opcion.value">{{ opcion.label }}</option>
+            </select>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'badge'">
+            <span [class]="'badge-rol badge-rol--' + valor(item, columna)">{{ etiquetaOpcion(columna, item) }}</span>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'number'">
+            <span *ngIf="!estaEditando(item)">{{ valor(item, columna) }}</span>
+            <input
+              *ngIf="estaEditando(item)"
+              type="number"
+              [ngModel]="valor(item, columna)"
+              (ngModelChange)="actualizarValor(item, columna, $event)"
+              [name]="campoNombre(columna, item)"
+            />
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            <span *ngIf="!estaEditando(item)">{{ columna.enmascarar ? '••••••••' : valor(item, columna) }}</span>
+            <input
+              *ngIf="estaEditando(item)"
+              type="text"
+              [ngModel]="valor(item, columna)"
+              (ngModelChange)="actualizarValor(item, columna, $event)"
+              [name]="campoNombre(columna, item)"
+            />
+          </ng-container>
+        </ng-container>
+      </td>
+
+      <td class="actions-cell">
+        <ng-container *ngTemplateOutlet="accionesExtraTpl; context: { $implicit: item }"></ng-container>
+        <button *ngIf="!estaEditando(item)" class="btn btn-outline btn-sm" (click)="editar(item)">Editar</button>
+        <button *ngIf="estaEditando(item)" class="btn btn-primary btn-sm" (click)="onGuardar(item)">Guardar</button>
+        <button class="btn btn-danger btn-sm" (click)="onEliminar(item)">Eliminar</button>
+      </td>
+    </tr>
+
+    <tr *ngIf="items.length === 0">
+      <td [attr.colspan]="columnas.length + 1" class="text-muted">{{ mensajeVacio }}</td>
+    </tr>
+  </tbody>
+</table>

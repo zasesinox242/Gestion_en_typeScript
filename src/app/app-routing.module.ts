@@ -1,58 +1,108 @@
 import { Routes } from '@angular/router';
-
-import { LoginComponent } from './features/login/login.component';
-
-import { AdminComponent } from './features/admin/admin.component';
-import { AdminResumenComponent } from './features/admin-resumen/admin-resumen.component';
-import { GestionCursosComponent } from './features/gestion-cursos/gestion-cursos.component';
-import { GestionUsuariosComponent } from './features/gestion-usuarios/gestion-usuarios.component';
-import { ListaAlumnosComponent } from './features/lista-alumnos/lista-alumno.component';
-
-import { CursosHorizontalComponent } from './features/cursos-horizontal/cursos-horizontal.component';
-import { MisCursosProfesorComponent } from './features/mis-cursos-profesor/mis-cursos-profesor.component';
-import { NotasAlumnoComponent } from './features/notas-alumno/notas-alumno.component';
-
-import { CursosAlumnoComponent } from './features/cursos-alumno/cursos-alumno.component';
-import { MisCursosAlumnoComponent } from './features/mis-cursos-alumno/mis-cursos-alumno.component';
-
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 
+// Todas las features se cargan de forma perezosa (loadComponent): cada rol
+// baja solo el código que necesita, y esta tabla queda como única fuente de
+// verdad de qué existe y a dónde vive, sin imports estáticos arriba.
+
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: 'login', component: LoginComponent },
+
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/login/login.component').then(m => m.LoginComponent)
+  },
 
   {
     path: 'admin',
-    component: AdminComponent,
+    loadComponent: () =>
+      import('./shared/ui/role-page/role-page.component').then(m => m.RolePageComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['admin'] },
+    data: {
+      roles: ['admin'],
+      shell: {
+        rol: 'admin',
+        navItems: [
+          { label: 'Resumen', path: '/admin' },
+          { label: 'Gestionar cursos', path: '/admin/gestion-cursos' },
+          { label: 'Gestionar usuarios', path: '/admin/gestion-usuarios' }
+        ]
+      }
+    },
     children: [
-      { path: '', component: AdminResumenComponent },
-      { path: 'gestion-cursos', component: GestionCursosComponent },
-      { path: 'gestion-cursos/:cursoId/alumnos', component: ListaAlumnosComponent },
-      { path: 'gestion-usuarios', component: GestionUsuariosComponent }
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/admin-resumen/admin-resumen.component').then(m => m.AdminResumenComponent)
+      },
+      {
+        path: 'gestion-cursos',
+        loadComponent: () =>
+          import('./features/gestion-cursos/gestion-cursos.component').then(m => m.GestionCursosComponent)
+      },
+      {
+        path: 'gestion-cursos/:cursoId/alumnos',
+        loadComponent: () =>
+          import('./features/lista-alumnos/lista-alumnos.component').then(m => m.ListaAlumnosComponent)
+      },
+      {
+        path: 'gestion-usuarios',
+        loadComponent: () =>
+          import('./features/gestion-usuarios/gestion-usuarios.component').then(m => m.GestionUsuariosComponent)
+      }
     ]
   },
 
   {
     path: 'profesor',
-    component: CursosHorizontalComponent,
+    loadComponent: () =>
+      import('./shared/ui/role-page/role-page.component').then(m => m.RolePageComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['profesor'] },
+    data: {
+      roles: ['profesor'],
+      shell: {
+        rol: 'profesor',
+        navItems: [{ label: 'Mis cursos', path: '/profesor' }]
+      }
+    },
     children: [
-      { path: '', component: MisCursosProfesorComponent },
-      { path: 'notas/:cursoId', component: NotasAlumnoComponent }
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/mis-cursos-profesor/mis-cursos-profesor.component').then(
+            m => m.MisCursosProfesorComponent
+          )
+      },
+      {
+        path: 'notas/:cursoId',
+        loadComponent: () =>
+          import('./features/notas-alumno/notas-alumno.component').then(m => m.NotasAlumnoComponent)
+      }
     ]
   },
 
   {
     path: 'alumno',
-    component: CursosAlumnoComponent,
+    loadComponent: () =>
+      import('./shared/ui/role-page/role-page.component').then(m => m.RolePageComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['alumno'] },
+    data: {
+      roles: ['alumno'],
+      shell: {
+        rol: 'alumno',
+        navItems: [{ label: 'Mis cursos', path: '/alumno' }]
+      }
+    },
     children: [
-      { path: '', component: MisCursosAlumnoComponent }
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/mis-cursos-alumno/mis-cursos-alumno.component').then(
+            m => m.MisCursosAlumnoComponent
+          )
+      }
     ]
   },
 

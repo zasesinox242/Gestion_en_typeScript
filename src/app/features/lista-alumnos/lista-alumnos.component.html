@@ -6,40 +6,13 @@
 
 <div class="card">
   <div class="card-body">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Nombres</th>
-          <th>Apellidos</th>
-          <th>Edad</th>
-          <th style="width: 200px">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let alumno of alumnos">
-          <td>
-            <span *ngIf="!alumno.editando">{{ alumno.nombres }}</span>
-            <input *ngIf="alumno.editando" [(ngModel)]="alumno.nombres" name="n-{{alumno.id}}" />
-          </td>
-          <td>
-            <span *ngIf="!alumno.editando">{{ alumno.apellidos }}</span>
-            <input *ngIf="alumno.editando" [(ngModel)]="alumno.apellidos" name="a-{{alumno.id}}" />
-          </td>
-          <td class="mono">
-            <span *ngIf="!alumno.editando">{{ alumno.edad }}</span>
-            <input *ngIf="alumno.editando" type="number" [(ngModel)]="alumno.edad" name="e-{{alumno.id}}" />
-          </td>
-          <td class="actions-cell">
-            <button *ngIf="!alumno.editando" class="btn btn-outline btn-sm" (click)="editar(alumno)">Editar</button>
-            <button *ngIf="alumno.editando" class="btn btn-primary btn-sm" (click)="guardar(alumno)">Guardar</button>
-            <button class="btn btn-danger btn-sm" (click)="eliminar(alumno)">Eliminar</button>
-          </td>
-        </tr>
-        <tr *ngIf="alumnos.length === 0">
-          <td colspan="4" class="text-muted">Ningún alumno matriculado todavía.</td>
-        </tr>
-      </tbody>
-    </table>
+    <app-editable-table
+      [items]="alumnos"
+      [columnas]="columnas"
+      mensajeVacio="Ningún alumno matriculado todavía."
+      (guardar)="guardar($event)"
+      (eliminar)="eliminar($event)"
+    ></app-editable-table>
 
     <form class="inline-form" (ngSubmit)="agregarAlumno()">
       <input placeholder="Nombres" [(ngModel)]="nuevoAlumno.nombres" name="nombres" />
