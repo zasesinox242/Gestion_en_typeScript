@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // SQLite para arrancar sin infraestructura extra (portafolio/práctica).
+  // Cambiar a "postgresql" + una DATABASE_URL real cuando se necesite escalar,
+  // sin tocar una sola línea de las capas domain/application/interface.
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  admin
+  profesor
+  alumno
+}
+
+model Usuario {
+  id       Int    @id @default(autoincrement())
+  usuario  String @unique
+  // Hash bcrypt, nunca texto plano (a diferencia de la demo en memoria actual).
+  password String
+  rol      Rol
+
+  @@map("usuarios")
+}
+
+model Curso {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  matriculas AlumnoCurso[]
+  notas      Nota[]
+
+  @@map("cursos")
+}
+
+model Alumno {
+  id        Int    @id @default(autoincrement())
+  nombres   String
+  apellidos String
+  edad      Int
+
+  // Reemplaza el array `cursosIds` del modelo Angular por una relación real.
+  matriculas AlumnoCurso[]
+  notas      Nota[]
+
+  @@map("alumnos")
+}
+
+/** Tabla intermedia: qué alumno está matriculado en qué curso. */
+model AlumnoCurso {
+  alumnoId Int
+  cursoId  Int
+
+  alumno Alumno @relation(fields: [alumnoId], references: [id], onDelete: Cascade)
+  curso  Curso  @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  @@id([alumnoId, cursoId])
+  @@map("alumno_curso")
+}
+
+model Nota {
+  alumnoId Int
+  cursoId  Int
+  valor    Int // 0 - 20
+
+  alumno Alumno @relation(fields: [alumnoId], references: [id], onDelete: Cascade)
+  curso  Curso  @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  @@id([alumnoId, cursoId])
+  @@map("notas")
+}
