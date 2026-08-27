@@ -1,0 +1,45 @@
+diff --git a/src/index.html b/src/index.html
+new file mode 100644
+index 0000000..0c06c01
+--- /dev/null
++++ b/src/index.html
+@@ -0,0 +1,13 @@
++<!doctype html>
++<html lang="es">
++<head>
++  <meta charset="utf-8">
++  <title>Gestión Académica</title>
++  <base href="/">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <link rel="icon" type="image/x-icon" href="favicon.ico">
++</head>
++<body>
++  <app-root></app-root>
++</body>
++</html>
+diff --git a/src/main.ts b/src/main.ts
+new file mode 100644
+index 0000000..ac562a1
+--- /dev/null
++++ b/src/main.ts
+@@ -0,0 +1,8 @@
++import { bootstrapApplication } from '@angular/platform-browser';
++import { provideRouter } from '@angular/router';
++import { AppComponent } from './app/app.component';
++import { routes } from './app/app-routing.module';
++
++bootstrapApplication(AppComponent, {
++  providers: [provideRouter(routes)]
++}).catch((err) => console.error(err));
+diff --git a/src/styles.css b/src/styles.css
+new file mode 100644
+index 0000000..2b6f054
+--- /dev/null
++++ b/src/styles.css
+@@ -0,0 +1,6 @@
++/* Estilos globales de la aplicación */
++html, body {
++  height: 100%;
++  margin: 0;
++  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
++}

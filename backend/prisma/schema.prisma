@@ -10,18 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Rol {
-  admin
-  profesor
-  alumno
-}
 
 model Usuario {
   id       Int    @id @default(autoincrement())
   usuario  String @unique
   // Hash bcrypt, nunca texto plano (a diferencia de la demo en memoria actual).
   password String
-  rol      Rol
+  rol      String
 
   @@map("usuarios")
 }
@@ -49,7 +44,7 @@ model Alumno {
   @@map("alumnos")
 }
 
-/** Tabla intermedia: qué alumno está matriculado en qué curso. */
+// Tabla intermedia: qué alumno está matriculado en qué curso. //
 model AlumnoCurso {
   alumnoId Int
   cursoId  Int
