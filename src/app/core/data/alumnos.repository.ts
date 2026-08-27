@@ -1,53 +1,33 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Alumno } from '../domain/models';
+import { API_URL } from '../api-url';
 
 @Injectable({ providedIn: 'root' })
 export class AlumnosRepository {
-  private seed: Alumno[] = [
-    { id: 1, nombres: 'Valeria', apellidos: 'Montoya Ríos', edad: 13, cursosIds: [1, 2] },
-    { id: 2, nombres: 'Andrés Marcos', apellidos: 'Paredes Salazar', edad: 14, cursosIds: [1] },
-    { id: 3, nombres: 'Luciana', apellidos: 'Herrera Campos', edad: 12, cursosIds: [1, 2] },
-    { id: 4, nombres: 'Diego Franco', apellidos: 'Quispe López', edad: 13, cursosIds: [2] }
-  ];
+  private readonly base = `${API_URL}/alumnos`;
 
-  private alumnos$ = new BehaviorSubject<Alumno[]>(this.seed);
-  private nextId = this.seed.length + 1;
-  private readonly LATENCY = 200;
+  constructor(private http: HttpClient) {}
 
   list(): Observable<Alumno[]> {
-    return this.alumnos$.pipe(map(list => [...list]), delay(this.LATENCY));
+    return this.http.get<Alumno[]>(this.base);
   }
 
   listByCurso(cursoId: number): Observable<Alumno[]> {
-    return this.alumnos$.pipe(
-      map(list => list.filter(a => a.cursosIds.includes(cursoId))),
-      delay(this.LATENCY)
-    );
+    const params = new HttpParams().set('cursoId', cursoId);
+    return this.http.get<Alumno[]>(this.base, { params });
   }
 
   create(alumno: Omit<Alumno, 'id'>): Observable<Alumno> {
-    const nuevo: Alumno = { ...alumno, id: this.nextId++ };
-    this.alumnos$.next([...this.alumnos$.value, nuevo]);
-    return of(nuevo).pipe(delay(this.LATENCY));
+    return this.http.post<Alumno>(this.base, alumno);
   }
 
   update(id: number, cambios: Partial<Alumno>): Observable<Alumno> {
-    const actual = this.alumnos$.value;
-    const idx = actual.findIndex(a => a.id === id);
-    if (idx === -1) {
-      return throwError(() => new Error('Alumno no encontrado'));
-    }
-    const actualizado = { ...actual[idx], ...cambios, id };
-    const copia = [...actual];
-    copia[idx] = actualizado;
-    this.alumnos$.next(copia);
-    return of(actualizado).pipe(delay(this.LATENCY));
+    return this.http.put<Alumno>(`${this.base}/${id}`, cambios);
   }
 
   delete(id: number): Observable<void> {
-    this.alumnos$.next(this.alumnos$.value.filter(a => a.id !== id));
-    return of(void 0).pipe(delay(this.LATENCY));
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

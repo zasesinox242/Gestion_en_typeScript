@@ -1,41 +1,22 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Nota } from '../domain/models';
+import { API_URL } from '../api-url';
 
 @Injectable({ providedIn: 'root' })
 export class NotasRepository {
-  private seed: Nota[] = [
-    { alumnoId: 1, cursoId: 1, valor: 18 },
-    { alumnoId: 2, cursoId: 1, valor: 19 },
-    { alumnoId: 3, cursoId: 1, valor: 16 },
-    { alumnoId: 1, cursoId: 2, valor: 17 },
-    { alumnoId: 3, cursoId: 2, valor: 15 },
-    { alumnoId: 4, cursoId: 2, valor: 14 }
-  ];
+  private readonly base = `${API_URL}/notas`;
 
-  private notas$ = new BehaviorSubject<Nota[]>(this.seed);
-  private readonly LATENCY = 200;
+  constructor(private http: HttpClient) {}
 
   listByCurso(cursoId: number): Observable<Nota[]> {
-    return this.notas$.pipe(
-      map(list => list.filter(n => n.cursoId === cursoId)),
-      delay(this.LATENCY)
-    );
+    const params = new HttpParams().set('cursoId', cursoId);
+    return this.http.get<Nota[]>(this.base, { params });
   }
 
+  // El backend hace upsert vía POST /notas (registrar), tanto para crear como actualizar.
   upsert(nota: Nota): Observable<Nota> {
-    const actual = this.notas$.value;
-    const idx = actual.findIndex(
-      n => n.alumnoId === nota.alumnoId && n.cursoId === nota.cursoId
-    );
-    const copia = [...actual];
-    if (idx === -1) {
-      copia.push(nota);
-    } else {
-      copia[idx] = nota;
-    }
-    this.notas$.next(copia);
-    return of(nota).pipe(delay(this.LATENCY));
+    return this.http.post<Nota>(this.base, nota);
   }
 }

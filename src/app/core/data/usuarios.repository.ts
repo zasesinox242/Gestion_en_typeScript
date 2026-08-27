@@ -1,58 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Usuario } from '../domain/models';
+import { API_URL } from '../api-url';
 
-/**
- * "Base de datos" en memoria de usuarios. Hoy vive en el navegador;
- * mañana esta clase es la única que tendría que cambiar para hablar
- * con una API real (misma forma pública, otra implementación interna).
- */
 @Injectable({ providedIn: 'root' })
 export class UsuariosRepository {
-  private seed: Usuario[] = [
-    { id: 1, usuario: 'admin', password: 'admin123', rol: 'admin' },
-    { id: 2, usuario: 'profe', password: 'profe123', rol: 'profesor' },
-    { id: 3, usuario: 'alumno', password: 'alumno123', rol: 'alumno' }
-  ];
+  private readonly base = `${API_URL}/usuarios`;
 
-  private usuarios$ = new BehaviorSubject<Usuario[]>(this.seed);
-  private nextId = this.seed.length + 1;
+  constructor(private http: HttpClient) {}
 
-  private readonly LATENCY = 250;
-
+  // Nota: el backend nunca devuelve el hash de password (usa UsuarioSinPassword
+  // internamente), por eso list()/create()/update() reciben objetos sin ese campo
+  // aunque el tipo Usuario lo declare — nada en la UI lee `.password` de un
+  // usuario ya listado, solo lo usa para escribir el formulario de alta.
   list(): Observable<Usuario[]> {
-    return this.usuarios$.pipe(map(list => [...list]), delay(this.LATENCY));
-  }
-
-  findByCredentials(usuario: string, password: string): Observable<Usuario | undefined> {
-    const found = this.usuarios$.value.find(
-      u => u.usuario === usuario && u.password === password
-    );
-    return of(found).pipe(delay(this.LATENCY));
+    return this.http.get<Usuario[]>(this.base);
   }
 
   create(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
-    const nuevo: Usuario = { ...usuario, id: this.nextId++ };
-    this.usuarios$.next([...this.usuarios$.value, nuevo]);
-    return of(nuevo).pipe(delay(this.LATENCY));
+    return this.http.post<Usuario>(this.base, usuario);
   }
 
   update(id: number, cambios: Partial<Usuario>): Observable<Usuario> {
-    const actual = this.usuarios$.value;
-    const idx = actual.findIndex(u => u.id === id);
-    if (idx === -1) {
-      return throwError(() => new Error('Usuario no encontrado'));
-    }
-    const actualizado = { ...actual[idx], ...cambios, id };
-    const copia = [...actual];
-    copia[idx] = actualizado;
-    this.usuarios$.next(copia);
-    return of(actualizado).pipe(delay(this.LATENCY));
+    return this.http.put<Usuario>(`${this.base}/${id}`, cambios);
   }
 
   delete(id: number): Observable<void> {
-    this.usuarios$.next(this.usuarios$.value.filter(u => u.id !== id));
-    return of(void 0).pipe(delay(this.LATENCY));
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

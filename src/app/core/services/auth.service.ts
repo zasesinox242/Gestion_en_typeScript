@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { UsuariosRepository } from '../data/usuarios.repository';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { Rol } from '../domain/models';
+import { API_URL } from '../api-url';
 
 export interface SesionActiva {
   token: string;
@@ -16,24 +16,18 @@ const USUARIO_KEY = 'usuario';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private usuariosRepo: UsuariosRepository) {}
+  constructor(private http: HttpClient) {}
 
   login(usuario: string, password: string): Observable<SesionActiva> {
-    return this.usuariosRepo.findByCredentials(usuario, password).pipe(
-      switchMap(encontrado => {
-        if (!encontrado) {
-          return throwError(() => ({ message: 'Usuario o contraseña incorrectos' }));
-        }
-        // Nota: token simulado únicamente para fines de demostración.
-        // En un backend real esto sería un JWT firmado por el servidor.
-        const payload = { usuario: encontrado.usuario, rol: encontrado.rol, iat: Date.now() };
-        const token = btoa(JSON.stringify(payload));
-
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(ROL_KEY, encontrado.rol);
-        localStorage.setItem(USUARIO_KEY, encontrado.usuario);
-
-        return [{ token, rol: encontrado.rol, usuario: encontrado.usuario }];
+    return this.http.post<SesionActiva>(`${API_URL}/auth/login`, { usuario, password }).pipe(
+      tap((sesion) => {
+        localStorage.setItem(TOKEN_KEY, sesion.token);
+        localStorage.setItem(ROL_KEY, sesion.rol);
+        localStorage.setItem(USUARIO_KEY, sesion.usuario);
+      }),
+      catchError((err: HttpErrorResponse) => {
+        const mensaje = err.error?.message || 'Usuario o contraseña incorrectos';
+        return throwError(() => ({ message: mensaje }));
       })
     );
   }
